@@ -101,7 +101,7 @@ struct TournamentPlayer: Identifiable, Equatable {
 }
 
 func getTestMatches(players: [TournamentPlayer]) -> [TournamentMatch] {
-  var playerPool = players.shuffled();
+  var playerPool = players.map({ $0 });
   var result: [TournamentMatch] = []
   while !playerPool.isEmpty {
     let firstPlayer = playerPool.removeFirst()
@@ -140,7 +140,7 @@ func getTestTournamentBracket() -> TournamentBracket {
     TournamentPlayer(name: "player sixteen")
   ];
 
-  let eigthsMatches = getTestMatches(players: players);
+  let eigthsMatches = getTestMatches(players: players.shuffled());
   let quarterFinalsMatches = getTestMatches(players: eigthsMatches.map({ $0.winner }))
   let semiFinalsMatches = getTestMatches(players: quarterFinalsMatches.map({ $0.winner }))
   let finalsMatches = getTestMatches(players: semiFinalsMatches.map({ $0.winner }))
