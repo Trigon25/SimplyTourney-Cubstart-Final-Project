@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		192085D72B0C8684009779BC /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192085D52B0C8684009779BC /* ViewModel.swift */; };
+		192085D82B0C8684009779BC /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192085D62B0C8684009779BC /* Model.swift */; };
 		E84796CF2B05CF07004008E6 /* TournamentBracketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84796CE2B05CF07004008E6 /* TournamentBracketView.swift */; };
 		E84796D12B05CF59004008E6 /* StartingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84796D02B05CF59004008E6 /* StartingView.swift */; };
 		E84796D42B05CF8E004008E6 /* CreateNewTourneyBracketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84796D32B05CF8E004008E6 /* CreateNewTourneyBracketView.swift */; };
@@ -16,6 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		192085D52B0C8684009779BC /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		192085D62B0C8684009779BC /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		E84796CE2B05CF07004008E6 /* TournamentBracketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentBracketView.swift; sourceTree = "<group>"; };
 		E84796D02B05CF59004008E6 /* StartingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartingView.swift; sourceTree = "<group>"; };
 		E84796D32B05CF8E004008E6 /* CreateNewTourneyBracketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewTourneyBracketView.swift; sourceTree = "<group>"; };
@@ -55,6 +59,8 @@
 		E86B71922B05CCA90002E457 /* SimplyTourney */ = {
 			isa = PBXGroup;
 			children = (
+				192085D62B0C8684009779BC /* Model.swift */,
+				192085D52B0C8684009779BC /* ViewModel.swift */,
 				E84796D02B05CF59004008E6 /* StartingView.swift */,
 				E86B71932B05CCA90002E457 /* SimplyTourneyApp.swift */,
 				E84796CE2B05CF07004008E6 /* TournamentBracketView.swift */,
@@ -143,8 +149,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				192085D72B0C8684009779BC /* ViewModel.swift in Sources */,
 				E84796D12B05CF59004008E6 /* StartingView.swift in Sources */,
 				E84796D42B05CF8E004008E6 /* CreateNewTourneyBracketView.swift in Sources */,
+				192085D82B0C8684009779BC /* Model.swift in Sources */,
 				E84796CF2B05CF07004008E6 /* TournamentBracketView.swift in Sources */,
 				E86B71942B05CCA90002E457 /* SimplyTourneyApp.swift in Sources */,
 			);
