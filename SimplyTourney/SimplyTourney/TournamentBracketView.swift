@@ -9,8 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct TournamentBracketView: View {
-  //let bracket: TournamentBracket = getFullTestTournamentBracket();
-  let bracket: TournamentBracket = getInitialTestTournamentBracket();
+  let bracket: TournamentBracket = getFullTestTournamentBracket();
+  //let bracket: TournamentBracket = getInitialTestTournamentBracket();
 
 
     var body: some View {
@@ -42,14 +42,7 @@ struct MatchView: View {
   var isSecondPlayerWinner: Bool {
     match.winner == match.secondPlayer
   }
-//  var firstPlayerText: String {
-//    return match.firstPlayer?.name
-//
-//    return \(match.firstPlayer.name): \(match.firstPlayerScore)\(isFirstPlayerWinner ? " 🏆":"")"
-//  }
-//  var secondPlayerText: String {
-////\(isSecondPlayerWinner ? " 🏆":"")
-//  }
+
   var body: some View {
     VStack {
       switch match.state {
@@ -60,13 +53,11 @@ struct MatchView: View {
         Text(match.firstPlayer!.name)
         Text(match.secondPlayer!.name)
       case .Complete:
-        //Text("\(match.firstPlayer!.name): \(match.firstPlayerScore!)")
-        Text(match.firstPlayer!.name)
+        Text("\(match.firstPlayer!.name): \(match.firstPlayerScore!)")
           .opacity(isFirstPlayerWinner ? 1.0 : 0.6)
           .fontWeight(isFirstPlayerWinner ? .bold : .regular)
 
-        //Text("\(match.secondPlayer!.name): \(match.secondPlayerScore!)")
-        Text(match.secondPlayer!.name)
+        Text("\(match.secondPlayer!.name): \(match.secondPlayerScore!)")
           .opacity(isSecondPlayerWinner ? 1.0 : 0.6)
           .fontWeight(isSecondPlayerWinner ? .bold : .regular)
 
