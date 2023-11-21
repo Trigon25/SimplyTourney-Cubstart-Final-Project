@@ -98,8 +98,8 @@ func getTestTournamentBracket() -> TournamentBracket {
   ];
 
   let eigthsMatches = getTestMatches(players: players.shuffled());
-  let quarterFinalsMatches = getTestMatches(players: eigthsMatches.map({ $0.winner }))
-  let semiFinalsMatches = getTestMatches(players: quarterFinalsMatches.map({ $0.winner }))
+  let quarterFinalsMatches = getTestMatches(players: eigthsMatches.map({ $0.winner! }))
+  let semiFinalsMatches = getTestMatches(players: quarterFinalsMatches.map({ $0.winner! }))
   let finalsMatches = getTestMatches(players: semiFinalsMatches.map({ $0.winner }))
 
 
@@ -111,6 +111,7 @@ func getTestTournamentBracket() -> TournamentBracket {
 
   return TournamentBracket(
     name: "My Tournament",
+    size: .Sixteen,
     players:  players,
     rounds: rounds
   )
