@@ -7,12 +7,21 @@
 
 import Foundation
 
+enum TournamentBracketSize {
+  case Sixteen, ThirtyTwo
+}
+
 struct TournamentBracket: Identifiable {
   let name: String
+  let size: TournamentBracketSize
   let players: [TournamentPlayer]
   let rounds: [TournamentRound]
   var id: String {
       name
+  }
+  var completed: Bool {
+    // TODO: implement is complete logic by looking to be sure all matches in all rounds have a winner
+    return false
   }
 }
 
@@ -24,23 +33,54 @@ struct TournamentRound: Identifiable {
   }
 }
 
+
+
+enum TournamentMatchState {
+  case Complete, Ready, Empty, NotReady
+  // Complete: there is a first player, second player, both scores, and a winner
+  // Ready: there is a first player, second player, no scores, and no winner
+  // Empty: there is no first player, no second player, no scores, and no winner
+  // NotReady: there is a first player, no second player, no scores, and no winner
+  // NotReady: there is a second player, no first player, no scores, and no winner
+}
+
 struct TournamentMatch: Identifiable {
-    let firstPlayer: TournamentPlayer
-    let secondPlayer: TournamentPlayer
-    let firstPlayerScore: Int
-    let secondPlayerScore: Int
+    var state: TournamentMatchState {
+      if firstPlayer == nil && secondPlayer == nil {
+        return .Empty
+      }
+
+      if firstPlayer == nil || secondPlayer == nil {
+        return .NotReady
+      }
+
+      if firstPlayer != nil && secondPlayer != nil {
+        if (firstPlayerScore == nil && secondPlayerScore == nil) {
+          return .Ready
+        }
+      }
+
+      return .Complete
+    }
+    let firstPlayer: TournamentPlayer?
+    let secondPlayer: TournamentPlayer?
+    let firstPlayerScore: Int?
+    let secondPlayerScore: Int?
 
     var id: String {
-      firstPlayer.name + secondPlayer.name
+      UUID().uuidString
     }
 
-  var winner: TournamentPlayer {
+  var winner: TournamentPlayer? {
     if (firstPlayerScore == secondPlayerScore) {
-      // Need to handle draw condition
-      return TournamentPlayer(name: "Draw")
+      return nil
     }
 
-    return firstPlayerScore > secondPlayerScore
+    if firstPlayerScore == nil || secondPlayerScore == nil {
+      return nil
+    }
+
+    return firstPlayerScore! > secondPlayerScore!
     ? firstPlayer : secondPlayer
   }
 }
