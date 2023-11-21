@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-@Model
+//@Model
 class ViewModel: ObservableObject {
   var brackets: [TournamentBracket]
 
