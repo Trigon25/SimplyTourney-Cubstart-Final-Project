@@ -19,7 +19,7 @@ struct TournamentBracketView: View {
         LazyHStack {
           ForEach(bracket.rounds) {  round in
             VStack {
-              Text(round.name)
+              Text(round.name.rawValue)
               ForEach(round.matches) {
                 match in
                 MatchView(match: match)
@@ -119,10 +119,10 @@ func getFullTestTournamentBracket() -> TournamentBracket {
   let finalsMatches = getTestMatches(players: semiFinalsMatches.map({ $0.winner! }))
 
 
-  let eigths = TournamentRound(name: "Eighth-finals", matches: eigthsMatches)
-  let quarterFinals = TournamentRound(name: "Quarterfinals", matches: quarterFinalsMatches)
-  let semiFinals = TournamentRound(name: "Semifinals", matches: semiFinalsMatches)
-  let finals = TournamentRound(name: "Finals", matches: finalsMatches)
+  let eigths = TournamentRound(matches: eigthsMatches)
+  let quarterFinals = TournamentRound(matches: quarterFinalsMatches)
+  let semiFinals = TournamentRound(matches: semiFinalsMatches)
+  let finals = TournamentRound(matches: finalsMatches)
   let rounds = [eigths, quarterFinals, semiFinals, finals]
 
   return TournamentBracket(
