@@ -6,14 +6,18 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct CreateNewTourneyBracketView: View {
+    @Environment(\.dismiss) var dismiss
+    
     @State private var newTournament: String = ""
     @State private var bracketSize = 16
     @State private var playerList: [String] = []
     @State private var newPlayerName: String = ""
     
     @State private var showingAlert = false
+    @State private var bracketSizeAlert = false
     var body: some View {
         VStack {
             Text("Create New Tournament")
@@ -62,7 +66,7 @@ struct CreateNewTourneyBracketView: View {
                 }.padding(EdgeInsets(top: 25, leading: 0, bottom: 25, trailing: 0))
             }.padding()
             
-            Text("Player List:")
+            Text("Player List:  \(playerList.count)")
                 .foregroundStyle(.white)
                 .padding()
                 .frame(width: UIScreen.main.bounds.width)
@@ -79,6 +83,46 @@ struct CreateNewTourneyBracketView: View {
                     .foregroundStyle(.gray.opacity(0.5))
                     .padding()
             ))
+            
+            HStack {
+                Button{
+                    if playerList.count == bracketSize {
+                        // TODO: append the new bracket to swiftdata; current problem is that swiftdata models are not set up, might need to change the way we set up the model file for us to be able to query it.
+                        let newBracket = ViewModel.scaffoldBracket(name: newTournament, players: playerList, size: bracketSize == 16 ? .Sixteen : .ThirtyTwo)
+                        
+                        newTournament = ""
+                        playerList = []
+                        bracketSize = 16
+                        newPlayerName = ""
+                        dismiss()
+                    } else {
+                        bracketSizeAlert = true
+                    }
+                } label: {
+                    Text("Save")
+                        .foregroundStyle(.white)
+                        .padding()
+                        .frame(width: 100, height: 50)
+                        .background(RoundedRectangle(cornerRadius: 20).fill(Color.green.opacity(0.9)))
+                }.alert("Number of players does not correspond to bracket size", isPresented: $bracketSizeAlert) {
+                    Button("OK", role:.cancel){}
+                }
+                
+                Button {
+                    newTournament = ""
+                    playerList = []
+                    bracketSize = 16
+                    newPlayerName = ""
+                    dismiss()
+                } label: {
+                    Text("Discard")
+                        .foregroundStyle(.white)
+                        .padding()
+                        .frame(width: 100, height: 50)
+                        .background(RoundedRectangle(cornerRadius: 20).fill(Color.red.opacity(0.9)))
+                }
+            }
+            
             Spacer()
         }
 

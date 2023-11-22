@@ -141,10 +141,10 @@ func getInitialTestTournamentBracket() -> TournamentBracket {
   let finalsMatches = [TournamentMatch()]
 
 
-  let eigths = TournamentRound(name: "Eighth-finals", matches: eigthsMatches)
-  let quarterFinals = TournamentRound(name: "Quarterfinals", matches: quarterFinalsMatches)
-  let semiFinals = TournamentRound(name: "Semifinals", matches: semiFinalsMatches)
-  let finals = TournamentRound(name: "Finals", matches: finalsMatches)
+  let eigths = TournamentRound(matches: eigthsMatches)
+  let quarterFinals = TournamentRound( matches: quarterFinalsMatches)
+  let semiFinals = TournamentRound( matches: semiFinalsMatches)
+  let finals = TournamentRound(matches: finalsMatches)
   let rounds = [eigths, quarterFinals, semiFinals, finals]
 
   return TournamentBracket(
