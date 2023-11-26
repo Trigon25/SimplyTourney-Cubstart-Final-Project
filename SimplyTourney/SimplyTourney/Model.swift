@@ -32,7 +32,7 @@ class TournamentBracket: Identifiable {
       name
   }
   var completed: Bool {
-    return rounds.allSatisfy({ $0.matches.allSatisfy({ $0.winner != nil })})
+    return rounds.allSatisfy({ $0.completed })
   }
   init(name: String, size: TournamentBracketSize, players: [TournamentPlayer], rounds: [TournamentRound]) {
     self.name = name
@@ -99,6 +99,11 @@ class TournamentRound: Identifiable {
   var id: String {
     name.rawValue
   }
+
+  var completed: Bool {
+    return matches.allSatisfy({ $0.state == .Complete })
+  }
+
 
   init(matches: [TournamentMatch]) {
     self.matches = matches
