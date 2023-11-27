@@ -10,7 +10,7 @@ import SwiftData
 
 struct TournamentBracketView: View {
   let bracket: TournamentBracket = getFullTestTournamentBracket();
-  //let bracket: TournamentBracket = getInitialTestTournamentBracket();
+//  let bracket: TournamentBracket = getInitialTestTournamentBracket();
 
 
     var body: some View {
@@ -23,6 +23,7 @@ struct TournamentBracketView: View {
               ForEach(round.matches) {
                 match in
                 MatchView(match: match)
+                  .padding(20.0)
               }
             }
           }
@@ -32,6 +33,54 @@ struct TournamentBracketView: View {
       .scrollTargetBehavior(.viewAligned)
       .safeAreaPadding(.horizontal, 40)
     }
+}
+
+
+struct MatchPlayerView: View {
+  let player: TournamentPlayer?
+  var score: Int?
+  var isWinner: Bool? = false
+  var body: some View {
+    ZStack {
+      Capsule()
+        .fill(.gray.opacity(0.5))
+      HStack {
+        if let player = player {
+          Text(player.name)
+            .padding(.leading, 20.0)
+            .padding(.vertical, 5.0)
+          Spacer()
+          Divider()
+            .bold()
+            .overlay(.black)
+          if let score = score {
+
+            Text("\(score)".padding(toLength: 4, withPad: " ", startingAt: 0))
+              .padding(.trailing, 20.0)
+              .monospaced()
+              .fontWeight(isWinner == true ? .bold : .regular)
+          } else {
+            Text("")
+          }
+        } else {
+          Text("-")
+        }
+
+      }
+    }
+    .opacity(isWinner == true ? 1.0 : 0.3)
+    .frame(height: 40.0)
+  }
+}
+
+struct UpdateScoreButton: View {
+  var body: some View {
+    Button (action: {
+
+    }, label: {
+      Image(systemName: "plus.diamond.fill")
+    })
+  }
 }
 
 struct MatchView: View {
@@ -44,51 +93,37 @@ struct MatchView: View {
   }
 
   var body: some View {
-    VStack {
+    VStack(spacing: 3.0) {
       switch match.state {
-      case .Empty:
-        Text("-")
-        Text("-")
-      case .Ready, .NotReady:
-        Text(match.firstPlayer!.name)
-        Text(match.secondPlayer!.name)
+      case .Empty, .NotReady:
+        MatchPlayerView(player: match.firstPlayer)
+        MatchPlayerView(player: match.secondPlayer)
+      case .Ready:
+        HStack {
+          VStack {
+            MatchPlayerView(player: match.firstPlayer)
+            MatchPlayerView(player: match.secondPlayer)
+          }
+          UpdateScoreButton()
+        }
       case .Complete:
-        Text("\(match.firstPlayer!.name): \(match.firstPlayerScore!)")
-          .opacity(isFirstPlayerWinner ? 1.0 : 0.6)
-          .fontWeight(isFirstPlayerWinner ? .bold : .regular)
-
-        Text("\(match.secondPlayer!.name): \(match.secondPlayerScore!)")
-          .opacity(isSecondPlayerWinner ? 1.0 : 0.6)
-          .fontWeight(isSecondPlayerWinner ? .bold : .regular)
-
+        MatchPlayerView(
+          player: match.firstPlayer,
+          score: match.firstPlayerScore,
+          isWinner: isFirstPlayerWinner
+        )
+        MatchPlayerView(
+          player: match.secondPlayer,
+          score: match.secondPlayerScore,
+          isWinner: isSecondPlayerWinner
+        )
       }
     }
     .frame(width: 250.0)
-    .padding()
-    .background(.cyan)
   }
 }
 
 
-
-func getTestMatches(players: [TournamentPlayer]) -> [TournamentMatch] {
-  var playerPool = players.map({ $0 });
-  var result: [TournamentMatch] = []
-  while !playerPool.isEmpty {
-    let firstPlayer = playerPool.removeFirst()
-    let secondPlayer = playerPool.removeFirst()
-    let firstPlayerScore = Int.random(in: 0...100)
-    let secondPlayerScore = Int.random(in: 0...100)
-    let match = TournamentMatch(
-      firstPlayer: firstPlayer,
-      secondPlayer: secondPlayer,
-      firstPlayerScore: firstPlayerScore,
-      secondPlayerScore: secondPlayerScore
-    )
-    result.append(match)
-  }
-  return result
-}
 
 func getTestTournamentPlayers() -> [TournamentPlayer] {
   return [
@@ -113,45 +148,34 @@ func getTestTournamentPlayers() -> [TournamentPlayer] {
 
 func getFullTestTournamentBracket() -> TournamentBracket {
   let players = getTestTournamentPlayers();
-  let eigthsMatches = getTestMatches(players: players.shuffled());
-  let quarterFinalsMatches = getTestMatches(players: eigthsMatches.map({ $0.winner! }))
-  let semiFinalsMatches = getTestMatches(players: quarterFinalsMatches.map({ $0.winner! }))
-  let finalsMatches = getTestMatches(players: semiFinalsMatches.map({ $0.winner! }))
-
-
-  let eigths = TournamentRound(matches: eigthsMatches)
-  let quarterFinals = TournamentRound(matches: quarterFinalsMatches)
-  let semiFinals = TournamentRound(matches: semiFinalsMatches)
-  let finals = TournamentRound(matches: finalsMatches)
-  let rounds = [eigths, quarterFinals, semiFinals, finals]
-
-  return TournamentBracket(
+  let bracket = TournamentBracket(
     name: "My Full Tournament",
     size: .Sixteen,
-    players:  players,
-    rounds: rounds
+    players:  players
   )
+
+  for round in bracket.rounds {
+    for match in round.matches {
+      match.firstPlayerScore = Int.random(in: 0...100)
+      var nextScore = Int.random(in: 0...100)
+      if (match.firstPlayerScore == nextScore) {
+        nextScore += 1
+      }
+      match.secondPlayerScore = nextScore
+    }
+  }
+
+
+  return bracket
 }
 
 func getInitialTestTournamentBracket() -> TournamentBracket {
   let players = getTestTournamentPlayers();
-  let eigthsMatches = getTestMatches(players: players.shuffled());
-  let quarterFinalsMatches = [TournamentMatch(),TournamentMatch(),TournamentMatch(),TournamentMatch()]
-  let semiFinalsMatches = [TournamentMatch(),TournamentMatch()]
-  let finalsMatches = [TournamentMatch()]
-
-
-  let eigths = TournamentRound(matches: eigthsMatches)
-  let quarterFinals = TournamentRound( matches: quarterFinalsMatches)
-  let semiFinals = TournamentRound( matches: semiFinalsMatches)
-  let finals = TournamentRound(matches: finalsMatches)
-  let rounds = [eigths, quarterFinals, semiFinals, finals]
 
   return TournamentBracket(
     name: "My Initial Tournament",
     size: .Sixteen,
-    players:  players,
-    rounds: rounds
+    players:  players
   )
 }
 

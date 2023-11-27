@@ -143,10 +143,8 @@ class TournamentMatch: Identifiable {
       return .NotReady
     }
 
-    if firstPlayer != nil && secondPlayer != nil {
-      if (firstPlayerScore == nil && secondPlayerScore == nil) {
-        return .Ready
-      }
+    if (firstPlayerScore == nil || secondPlayerScore == nil) {
+      return .Ready
     }
 
     return .Complete
