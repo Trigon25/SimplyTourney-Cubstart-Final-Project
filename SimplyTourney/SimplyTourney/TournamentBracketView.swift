@@ -15,7 +15,7 @@ struct TournamentBracketView: View {
 
     var body: some View {
       Text(bracket.name)
-      ScrollView(.horizontal) {
+      ScrollView([.horizontal, .vertical]) {
         LazyHStack {
           ForEach(bracket.rounds) {  round in
             VStack {
@@ -172,11 +172,13 @@ func getFullTestTournamentBracket() -> TournamentBracket {
       match.firstPlayerScore = Int.random(in: 0...100)
       var nextScore = Int.random(in: 0...100)
       if (match.firstPlayerScore == nextScore) {
-        nextScore += 1
+        nextScore += Int.random(in: 1...5)
       }
       match.secondPlayerScore = nextScore
     }
+    bracket.syncRounds()
   }
+
 
 
   return bracket

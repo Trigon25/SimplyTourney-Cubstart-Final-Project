@@ -14,7 +14,7 @@ enum TournamentRoundName: String, Codable {
   case QuarterFinals = "Quarterfinals"
   case SemiFinals = "Semifinals"
   case Finals = "Finals"
-  case Unknown = "???"
+  case Unknown = "Round"
 }
 
 enum TournamentBracketSize: Int, Codable {
@@ -48,9 +48,27 @@ class TournamentBracket: Identifiable {
     self.rounds = TournamentBracket.createRounds(size: size, players: players)
   }
 
+  func syncRounds() {
+    var roundPool = rounds.map({ $0 })
+    while !roundPool.isEmpty {
+      let currentRound = roundPool.removeFirst()
+      if let nextRound = roundPool.first {
+        var currentRoundWinnerPool = currentRound.matches.map({ $0.winner })
+        for match in nextRound.matches {
+          let firstPlayer = currentRoundWinnerPool.removeFirst()
+          let secondPlayer = currentRoundWinnerPool.removeFirst()
+          match.firstPlayer = firstPlayer
+          match.secondPlayer = secondPlayer
+        }
+
+      }
+
+    }
+  }
+
   private static func createRounds(size: TournamentBracketSize, players: [TournamentPlayer]) -> [TournamentRound] {
     var rounds: [TournamentRound] = []
-    var playerPool = players.shuffled().map({ $0 });
+    var playerPool = players.shuffled();
     var initialMatches: [TournamentMatch] = []
     while !playerPool.isEmpty {
       let firstPlayer = playerPool.removeFirst()
@@ -68,7 +86,6 @@ class TournamentBracket: Identifiable {
     var counter = initialMatches.count
     repeat {
       counter /= 2
-      print(counter)
       let matches = (0..<counter).map({ _ in TournamentMatch() })
       rounds.append(TournamentRound(matches: matches))
     } while(counter > 1)
@@ -101,7 +118,7 @@ class TournamentRound: Identifiable {
   }
 
   var completed: Bool {
-    return matches.allSatisfy({ $0.state == .Complete })
+    return matches.allSatisfy({ $0.winner != nil })
   }
 
 
