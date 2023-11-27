@@ -44,42 +44,58 @@ struct MatchPlayerView: View {
     ZStack {
       Capsule()
         .fill(.gray.opacity(0.5))
+        .strokeBorder(lineWidth: isWinner == true ? 2.0 : 0)
       HStack {
         if let player = player {
           Text(player.name)
             .padding(.leading, 20.0)
             .padding(.vertical, 5.0)
+
           Spacer()
           Divider()
             .bold()
+            .frame(width: isWinner == true ? 2.0 : 0.5)
             .overlay(.black)
           if let score = score {
 
-            Text("\(score)".padding(toLength: 4, withPad: " ", startingAt: 0))
-              .padding(.trailing, 20.0)
+            Text("\(score)".padding(toLength: 3, withPad: " ", startingAt: 0))
+              .padding(.trailing, 10.0)
               .monospaced()
               .fontWeight(isWinner == true ? .bold : .regular)
           } else {
-            Text("")
+            Text("   ")
+              .padding(.trailing, 10.0)
+              .monospaced()
           }
         } else {
-          Text("-")
+          Image(systemName: "lock.fill")
         }
 
       }
+      .foregroundColor(.black)
     }
-    .opacity(isWinner == true ? 1.0 : 0.3)
+    .opacity(isWinner == true || score == nil ? 1.0 : 0.4)
     .frame(height: 40.0)
   }
 }
 
-struct UpdateScoreButton: View {
+struct UpdateScoreButton<Content: View>: View {
+  @ViewBuilder let content: Content
+
   var body: some View {
     Button (action: {
 
     }, label: {
-      Image(systemName: "plus.diamond.fill")
+      HStack {
+        VStack {
+          content
+        }
+        Image(systemName: "arrow.forward.circle.fill")
+          .foregroundColor(.blue.opacity(0.65))
+          .imageScale(.large)
+      }
     })
+    .offset(x: -5.0)
   }
 }
 
@@ -99,13 +115,10 @@ struct MatchView: View {
         MatchPlayerView(player: match.firstPlayer)
         MatchPlayerView(player: match.secondPlayer)
       case .Ready:
-        HStack {
-          VStack {
+          UpdateScoreButton {
             MatchPlayerView(player: match.firstPlayer)
             MatchPlayerView(player: match.secondPlayer)
           }
-          UpdateScoreButton()
-        }
       case .Complete:
         MatchPlayerView(
           player: match.firstPlayer,
