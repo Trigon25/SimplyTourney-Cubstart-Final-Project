@@ -24,8 +24,11 @@ struct TournamentBracketView: View {
                     .foregroundStyle(.linearGradient(colors: [.orange, .yellow], startPoint: .bottomLeading, endPoint: .topTrailing))
                     .imageScale(.large)
                 }
-                Text(round.name.rawValue)
-                  .font(.title2)
+                HStack {
+                  Text(round.name.rawValue)
+                    .font(.title2)
+                  Image(systemName: round.completed ? "checkmark" : "hourglass.tophalf.filled")
+                }
                 ForEach(round.matches) {
                   match in
                   MatchView(match: match)
