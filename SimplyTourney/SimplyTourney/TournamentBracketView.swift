@@ -11,27 +11,41 @@ import SwiftData
 struct TournamentBracketView: View {
   let bracket: TournamentBracket = getFullTestTournamentBracket();
   //  let bracket: TournamentBracket = getInitialTestTournamentBracket();
-  //  var startingScrollPosition:  {
-  //    bracket.rounds.firstIndex(where: { !$0.completed }) {
 
   var body: some View {
     TabView {
       ForEach(bracket.rounds) { round in
-        VStack(alignment: .center) {
-          Text(round.name.rawValue)
-          ScrollView(.vertical) {
-            ForEach(round.matches) {
-              match in
-              MatchView(match: match)
-                .padding(20.0)
+          GeometryReader {
+            geo in
+            ScrollView(.vertical, showsIndicators: false) {
+              VStack {
+                if round.name == bracket.rounds.last?.name {
+                  Image(systemName: "trophy.fill")
+                    .foregroundStyle(.linearGradient(colors: [.orange, .yellow], startPoint: .bottomLeading, endPoint: .topTrailing))
+                    .imageScale(.large)
+                }
+                Text(round.name.rawValue)
+                  .font(.title2)
+                ForEach(round.matches) {
+                  match in
+                  MatchView(match: match)
+                    .padding(30.0)
+                }
+              }
+              .frame(minHeight: geo.size.height)
             }
           }
-        }
       }
     }
-    .safeAreaPadding(.horizontal, 40)
+    .safeAreaPadding(.horizontal, 5)
     .tabViewStyle(.page(indexDisplayMode: .always))
     .navigationTitle(bracket.name)
+    .onAppear {
+      let blue = UIColor(Color.blue)
+      UIPageControl.appearance().currentPageIndicatorTintColor = blue
+      UIPageControl.appearance().pageIndicatorTintColor = blue.withAlphaComponent(0.3)
+
+    }
   }
 }
 
@@ -132,7 +146,7 @@ struct MatchView: View {
         )
       }
     }
-    .frame(width: 250.0)
+    .frame(width: 280.0)
   }
 }
 
