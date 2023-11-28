@@ -10,29 +10,29 @@ import SwiftData
 
 struct TournamentBracketView: View {
   let bracket: TournamentBracket = getFullTestTournamentBracket();
-//  let bracket: TournamentBracket = getInitialTestTournamentBracket();
+  //  let bracket: TournamentBracket = getInitialTestTournamentBracket();
+  //  var startingScrollPosition:  {
+  //    bracket.rounds.firstIndex(where: { !$0.completed }) {
 
-
-    var body: some View {
-      Text(bracket.name)
-      ScrollView([.horizontal, .vertical]) {
-        LazyHStack {
-          ForEach(bracket.rounds) {  round in
-            VStack {
-              Text(round.name.rawValue)
-              ForEach(round.matches) {
-                match in
-                MatchView(match: match)
-                  .padding(20.0)
-              }
+  var body: some View {
+    TabView {
+      ForEach(bracket.rounds) { round in
+        VStack(alignment: .center) {
+          Text(round.name.rawValue)
+          ScrollView(.vertical) {
+            ForEach(round.matches) {
+              match in
+              MatchView(match: match)
+                .padding(20.0)
             }
           }
         }
-        .scrollTargetLayout()
       }
-      .scrollTargetBehavior(.viewAligned)
-      .safeAreaPadding(.horizontal, 40)
     }
+    .safeAreaPadding(.horizontal, 40)
+    .tabViewStyle(.page(indexDisplayMode: .always))
+    .navigationTitle(bracket.name)
+  }
 }
 
 
