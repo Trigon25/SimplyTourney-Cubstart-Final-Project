@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct TournamentBracketView: View {
+  @Environment(\.modelContext) private var modelContext
   @Bindable var bracket: TournamentBracket
 
   var body: some View {
@@ -99,6 +100,7 @@ struct MatchPlayerView: View {
 }
 
 struct UpdateScoreButton<Content: View>: View {
+  @Bindable var match: TournamentMatch
   @ViewBuilder let content: Content
   @State private var isUpdating: Bool = false
   @State var firstScore: Int = 0
@@ -106,7 +108,9 @@ struct UpdateScoreButton<Content: View>: View {
 
   var body: some View {
     Button (action: {
-      self.isUpdating = true
+      firstScore = 0
+      secondScore = 0
+      isUpdating = true
     }, label: {
       HStack {
         VStack {
@@ -135,17 +139,15 @@ struct UpdateScoreButton<Content: View>: View {
 
         HStack {
           Button(action: {
-            self.isUpdating = false
-            self.firstScore = 0
-            self.secondScore = 0
+            isUpdating = false
           }, label: {
             Text("Cancel")
           })
           .buttonStyle(.bordered)
           Button(action: {
-            self.isUpdating = false
-            self.firstScore = 0
-            self.secondScore = 0
+            match.firstPlayerScore = firstScore
+            match.secondPlayerScore = secondScore
+            isUpdating = false
           }, label: {
             Text("Update")
           })
@@ -174,7 +176,7 @@ struct MatchView: View {
         MatchPlayerView(player: match.firstPlayer)
         MatchPlayerView(player: match.secondPlayer)
       case .Ready:
-          UpdateScoreButton {
+        UpdateScoreButton(match: match) {
             MatchPlayerView(player: match.firstPlayer)
             MatchPlayerView(player: match.secondPlayer)
           }
