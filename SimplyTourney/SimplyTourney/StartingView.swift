@@ -6,14 +6,19 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct StartingView: View {
+//  @Query(filter: #Predicate<TournamentBracket> { bracket in !bracket.completed }) var inProgressBrackets: [TournamentBracket]
+//  @Query(filter: #Predicate<TournamentBracket> { bracket in bracket.completed }) var completedBrackets: [TournamentBracket]
+  @Query var inProgressBrackets: [TournamentBracket]
+  @Query var completedBrackets: [TournamentBracket]
+
     var body: some View {
         VStack {
             NavigationStack {
                 VStack {
                     Text("Simply**Tourney**").font(.largeTitle).padding(.top, 50)
-                    Spacer()
                     NavigationLink {
                         CreateNewTourneyBracketView()
                     } label: {
@@ -22,22 +27,41 @@ struct StartingView: View {
                     //title for created tournaments
                     
                     //links to existing tournaments
-                    
+
                     //button to make new one
                     .foregroundColor(.white)
                     .frame(width: 320, height: 50)
                     .background(RoundedRectangle(cornerRadius:25))
-                    .padding(.bottom, 100)
+//                    .padding(.bottom, 100)
+                  ForEach(inProgressBrackets) { bracket in
                     NavigationLink {
-                        TournamentBracketView()
+                      TournamentBracketView(bracket: bracket)
                     } label: {
-                        Text("**Frogger Tourney**").font(.title)
+                      Text("**\(bracket.name)**").font(.title)
                     }
                     .foregroundColor(.white)
                     .frame(width: 320, height: 50)
                     .background(RoundedRectangle(cornerRadius:25))
+//                    .padding(.bottom, 300)
+                  }
+                  Divider()
+                  ForEach(completedBrackets) { bracket in
+                    NavigationLink {
+                      TournamentBracketView(bracket: bracket)
+                    } label: {
+                      Text("__\(bracket.name)__").font(.title)
+                    }
+                    .foregroundColor(.gray)
+                    .frame(width: 320, height: 50)
+                    .background(RoundedRectangle(cornerRadius:25))
                     .padding(.bottom, 300)
-                    
+                  }
+//                    NavigationLink {
+//                        TournamentBracketView()
+//                    } label: {
+//                        Text("**Frogger Tourney**").font(.title)
+//                    }
+
                 }.navigationDestination(for: String.self) { value in
                 }
                 .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -53,5 +77,10 @@ struct StartingView: View {
 }
 
 #Preview {
-    StartingView()
+  StartingView()
+    .modelContainer(for: [
+      TournamentBracket.self,
+      TournamentRound.self,
+      TournamentMatch.self,
+    ])
 }

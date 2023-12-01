@@ -22,12 +22,14 @@ enum TournamentBracketSize: Int, Codable {
   case ThirtyTwo = 32
 }
 
-//@Model
+@Model
 class TournamentBracket: Identifiable {
   let name: String
   let size: TournamentBracketSize
-  let players: [TournamentPlayer]
-  let rounds: [TournamentRound]
+  @Relationship(deleteRule: .cascade) let players: [TournamentPlayer]
+  @Relationship(deleteRule: .cascade) let rounds: [TournamentRound]
+//  var orderedRounds: [TournamentRound] {}
+
   var id: String {
       name
   }
@@ -46,6 +48,16 @@ class TournamentBracket: Identifiable {
     self.size = size
     self.players = players
     self.rounds = TournamentBracket.createRounds(size: size, players: players)
+  }
+  init(name: String, size: Int, players: [String]) {
+    let bracketSize = size == 16 
+      ? TournamentBracketSize.Sixteen
+      : TournamentBracketSize.ThirtyTwo
+    let playerList = players.map({ TournamentPlayer(name: $0)})
+    self.name = name
+    self.size = bracketSize
+    self.players = playerList
+    self.rounds = TournamentBracket.createRounds(size: bracketSize, players: playerList)
   }
 
   func syncRounds() {
@@ -93,9 +105,9 @@ class TournamentBracket: Identifiable {
   }
 }
 
-//@Model
+@Model
 class TournamentRound: Identifiable {
-  let matches: [TournamentMatch]
+  @Relationship(deleteRule: .cascade) let matches: [TournamentMatch]
   var name: TournamentRoundName {
     switch(matches.count) {
     case 16:
@@ -140,10 +152,10 @@ enum TournamentMatchState: String, Codable {
   // NotReady: there is a second player, no first player, no scores, and no winner
 }
 
-//@Model
+@Model
 class TournamentMatch: Identifiable {
-  var firstPlayer: TournamentPlayer?
-  var secondPlayer: TournamentPlayer?
+  @Relationship(deleteRule: .cascade) var firstPlayer: TournamentPlayer?
+  @Relationship(deleteRule: .cascade) var secondPlayer: TournamentPlayer?
   var firstPlayerScore: Int?
   var secondPlayerScore: Int?
 
@@ -210,7 +222,7 @@ class TournamentMatch: Identifiable {
   }
 }
 
-//@Model
+@Model
 class TournamentPlayer: Identifiable, Equatable {
   static func == (lhs: TournamentPlayer, rhs: TournamentPlayer) -> Bool {
     return lhs.name == rhs.name

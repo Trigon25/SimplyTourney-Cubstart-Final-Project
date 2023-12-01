@@ -9,9 +9,14 @@ import SwiftUI
 
 @main
 struct SimplyTourneyApp: App {
-    var body: some Scene {
-        WindowGroup {
-            StartingView()
-        }
+  var body: some Scene {
+    WindowGroup {
+      StartingView()
+        .modelContainer(for: [
+          TournamentBracket.self,
+          TournamentRound.self,
+          TournamentMatch.self,
+        ])
     }
+  }
 }

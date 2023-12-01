@@ -10,7 +10,9 @@ import SwiftData
 
 struct CreateNewTourneyBracketView: View {
     @Environment(\.dismiss) var dismiss
-    
+    @Environment(\.modelContext) private var modelContext
+
+
     @State private var newTournament: String = ""
     @State private var bracketSize = 16
     @State private var playerList: [String] = []
@@ -88,8 +90,13 @@ struct CreateNewTourneyBracketView: View {
                 Button{
                     if playerList.count == bracketSize {
                         // TODO: append the new bracket to swiftdata; current problem is that swiftdata models are not set up, might need to change the way we set up the model file for us to be able to query it.
-                        let newBracket = ViewModel.scaffoldBracket(name: newTournament, players: playerList, size: bracketSize == 16 ? .Sixteen : .ThirtyTwo)
-                        
+                      let newBracket = TournamentBracket(
+                        name: newTournament,
+                        size: bracketSize,
+                        players: playerList
+                      )
+                      modelContext.insert(newBracket)
+
                         newTournament = ""
                         playerList = []
                         bracketSize = 16
@@ -151,5 +158,10 @@ struct EmptyDataModifier<Placeholder: View>: ViewModifier {
 
 
 #Preview {
-    CreateNewTourneyBracketView()
+  CreateNewTourneyBracketView()
+    .modelContainer(for: [
+      TournamentBracket.self,
+      TournamentRound.self,
+      TournamentMatch.self,
+    ])
 }

@@ -9,8 +9,10 @@ import SwiftUI
 import SwiftData
 
 struct TournamentBracketView: View {
+  let bracket: TournamentBracket
+
 //  let bracket: TournamentBracket = getFullTestTournamentBracket();
-    let bracket: TournamentBracket = getInitialTestTournamentBracket();
+//    let bracket: TournamentBracket = getInitialTestTournamentBracket();
 
   var body: some View {
     TabView {
@@ -251,6 +253,6 @@ func getInitialTestTournamentBracket() -> TournamentBracket {
   )
 }
 
-#Preview {
-  TournamentBracketView()
-}
+//#Preview {
+//  TournamentBracketView(bracket: getFullTestTournamentBracket())
+//}
