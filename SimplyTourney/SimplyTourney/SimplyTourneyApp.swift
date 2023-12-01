@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct SimplyTourneyApp: App {
@@ -16,7 +17,9 @@ struct SimplyTourneyApp: App {
           TournamentBracket.self,
           TournamentRound.self,
           TournamentMatch.self,
+          TournamentPlayer.self
         ])
     }
   }
 }
+

@@ -24,11 +24,14 @@ enum TournamentBracketSize: Int, Codable {
 
 @Model
 class TournamentBracket: Identifiable {
-  let name: String
+  let timestamp: Date
+  @Attribute(.unique) let name: String
   let size: TournamentBracketSize
-  @Relationship(deleteRule: .cascade) let players: [TournamentPlayer]
-  @Relationship(deleteRule: .cascade) let rounds: [TournamentRound]
-//  var orderedRounds: [TournamentRound] {}
+  let players: [TournamentPlayer]
+  let rounds: [TournamentRound]
+//  var orderedRounds: [TournamentRound] {
+//    rounds.sorted(by: {$0.timestamp < $1.timestamp})
+//  }
 
   var id: String {
       name
@@ -37,6 +40,7 @@ class TournamentBracket: Identifiable {
     return rounds.allSatisfy({ $0.completed })
   }
   init(name: String, size: TournamentBracketSize, players: [TournamentPlayer], rounds: [TournamentRound]) {
+    self.timestamp = .now
     self.name = name
     self.size = size
     self.players = players
@@ -44,16 +48,18 @@ class TournamentBracket: Identifiable {
   }
 
   init(name: String, size: TournamentBracketSize, players: [TournamentPlayer]) {
+    self.timestamp = .now
     self.name = name
     self.size = size
     self.players = players
     self.rounds = TournamentBracket.createRounds(size: size, players: players)
   }
   init(name: String, size: Int, players: [String]) {
+    self.timestamp = .now
     let bracketSize = size == 16 
       ? TournamentBracketSize.Sixteen
       : TournamentBracketSize.ThirtyTwo
-    let playerList = players.map({ TournamentPlayer(name: $0)})
+    let playerList = players.map({ TournamentPlayer(name: $0) })
     self.name = name
     self.size = bracketSize
     self.players = playerList
@@ -61,6 +67,7 @@ class TournamentBracket: Identifiable {
   }
 
   func syncRounds() {
+//    var roundPool = orderedRounds.map({ $0 })
     var roundPool = rounds.map({ $0 })
     while !roundPool.isEmpty {
       let currentRound = roundPool.removeFirst()
@@ -107,7 +114,11 @@ class TournamentBracket: Identifiable {
 
 @Model
 class TournamentRound: Identifiable {
-  @Relationship(deleteRule: .cascade) let matches: [TournamentMatch]
+  let timestamp: Date
+  let matches: [TournamentMatch]
+//  var orderedMatches: [TournamentMatch] {
+//    matches.sorted(by: {$0.timestamp < $1.timestamp})
+//  }
   var name: TournamentRoundName {
     switch(matches.count) {
     case 16:
@@ -135,6 +146,7 @@ class TournamentRound: Identifiable {
 
 
   init(matches: [TournamentMatch]) {
+    self.timestamp = .now
     self.matches = matches
   }
 }
@@ -154,8 +166,9 @@ enum TournamentMatchState: String, Codable {
 
 @Model
 class TournamentMatch: Identifiable {
-  @Relationship(deleteRule: .cascade) var firstPlayer: TournamentPlayer?
-  @Relationship(deleteRule: .cascade) var secondPlayer: TournamentPlayer?
+  let timestamp: Date
+  var firstPlayer: TournamentPlayer?
+  var secondPlayer: TournamentPlayer?
   var firstPlayerScore: Int?
   var secondPlayerScore: Int?
 
@@ -201,6 +214,7 @@ class TournamentMatch: Identifiable {
   }
 
   init(firstPlayer: TournamentPlayer?, secondPlayer: TournamentPlayer?, firstPlayerScore: Int?, secondPlayerScore: Int?) {
+    self.timestamp = .now
     self.firstPlayer = firstPlayer
     self.secondPlayer = secondPlayer
     self.firstPlayerScore = firstPlayerScore
@@ -208,6 +222,7 @@ class TournamentMatch: Identifiable {
   }
 
   init(firstPlayer: TournamentPlayer?, secondPlayer: TournamentPlayer?) {
+    self.timestamp = .now
     self.firstPlayer = firstPlayer
     self.secondPlayer = secondPlayer
     self.firstPlayerScore = nil
@@ -215,6 +230,7 @@ class TournamentMatch: Identifiable {
   }
 
   init() {
+    self.timestamp = .now
     self.firstPlayer = nil
     self.secondPlayer = nil
     self.firstPlayerScore = nil
@@ -224,16 +240,19 @@ class TournamentMatch: Identifiable {
 
 @Model
 class TournamentPlayer: Identifiable, Equatable {
+  let timestamp: Date
+  @Attribute(.unique) let name: String
+
   static func == (lhs: TournamentPlayer, rhs: TournamentPlayer) -> Bool {
     return lhs.name == rhs.name
   }
   
-  let name: String
   var id: String {
     name
   }
 
   init(name: String) {
+    self.timestamp = .now
     self.name = name
   }
 }

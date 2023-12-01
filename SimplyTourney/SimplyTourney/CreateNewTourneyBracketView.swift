@@ -163,5 +163,6 @@ struct EmptyDataModifier<Placeholder: View>: ViewModifier {
       TournamentBracket.self,
       TournamentRound.self,
       TournamentMatch.self,
+      TournamentPlayer.self
     ])
 }

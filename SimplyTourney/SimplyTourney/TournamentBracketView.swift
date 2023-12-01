@@ -9,18 +9,17 @@ import SwiftUI
 import SwiftData
 
 struct TournamentBracketView: View {
-  let bracket: TournamentBracket
-
-//  let bracket: TournamentBracket = getFullTestTournamentBracket();
-//    let bracket: TournamentBracket = getInitialTestTournamentBracket();
+  @Bindable var bracket: TournamentBracket
 
   var body: some View {
     TabView {
+//      ForEach(bracket.orderedRounds) { round in
       ForEach(bracket.rounds) { round in
           GeometryReader {
             geo in
             ScrollView(.vertical, showsIndicators: false) {
               VStack {
+//                if round.name == bracket.orderedRounds.last?.name {
                 if round.name == bracket.rounds.last?.name {
                   Image(systemName: "trophy.fill")
                     .foregroundStyle(.linearGradient(colors: [.orange, .yellow], startPoint: .bottomLeading, endPoint: .topTrailing))
@@ -31,6 +30,7 @@ struct TournamentBracketView: View {
                     .font(.title2)
                   Image(systemName: round.completed ? "checkmark" : "hourglass.tophalf.filled")
                 }
+//                ForEach(round.orderedMatches) {
                 ForEach(round.matches) {
                   match in
                   MatchView(match: match)
@@ -197,62 +197,13 @@ struct MatchView: View {
 
 
 
-func getTestTournamentPlayers() -> [TournamentPlayer] {
-  return [
-    TournamentPlayer(name: "player one"),
-    TournamentPlayer(name: "player two"),
-    TournamentPlayer(name: "player three"),
-    TournamentPlayer(name: "player four"),
-    TournamentPlayer(name: "player five"),
-    TournamentPlayer(name: "player six"),
-    TournamentPlayer(name: "player seven"),
-    TournamentPlayer(name: "player eight"),
-    TournamentPlayer(name: "player nine"),
-    TournamentPlayer(name: "player ten"),
-    TournamentPlayer(name: "player eleven"),
-    TournamentPlayer(name: "player twelve"),
-    TournamentPlayer(name: "player thirteen"),
-    TournamentPlayer(name: "player fourteen"),
-    TournamentPlayer(name: "player fifteen"),
-    TournamentPlayer(name: "player sixteen")
-  ];
-}
-
-func getFullTestTournamentBracket() -> TournamentBracket {
-  let players = getTestTournamentPlayers();
-  let bracket = TournamentBracket(
-    name: "My Full Tournament",
-    size: .Sixteen,
-    players:  players
-  )
-
-  for round in bracket.rounds {
-    for match in round.matches {
-      match.firstPlayerScore = Int.random(in: 0...100)
-      var nextScore = Int.random(in: 0...100)
-      if (match.firstPlayerScore == nextScore) {
-        nextScore += Int.random(in: 1...5)
-      }
-      match.secondPlayerScore = nextScore
-    }
-    bracket.syncRounds()
-  }
-
-
-
-  return bracket
-}
-
-func getInitialTestTournamentBracket() -> TournamentBracket {
-  let players = getTestTournamentPlayers();
-
-  return TournamentBracket(
-    name: "My Initial Tournament",
-    size: .Sixteen,
-    players:  players
-  )
-}
 
 //#Preview {
 //  TournamentBracketView(bracket: getFullTestTournamentBracket())
+//    .modelContainer(for: [
+//      TournamentBracket.self,
+//      TournamentRound.self,
+//      TournamentMatch.self,
+//      TournamentPlayer.self
+//    ])
 //}
