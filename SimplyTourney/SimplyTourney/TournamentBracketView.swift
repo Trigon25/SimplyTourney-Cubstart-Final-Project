@@ -9,8 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct TournamentBracketView: View {
-  let bracket: TournamentBracket = getFullTestTournamentBracket();
-  //  let bracket: TournamentBracket = getInitialTestTournamentBracket();
+//  let bracket: TournamentBracket = getFullTestTournamentBracket();
+    let bracket: TournamentBracket = getInitialTestTournamentBracket();
 
   var body: some View {
     TabView {
@@ -98,10 +98,13 @@ struct MatchPlayerView: View {
 
 struct UpdateScoreButton<Content: View>: View {
   @ViewBuilder let content: Content
+  @State private var isUpdating: Bool = false
+  @State var firstScore: Int = 0
+  @State var secondScore: Int = 0
 
   var body: some View {
     Button (action: {
-
+      self.isUpdating = true
     }, label: {
       HStack {
         VStack {
@@ -110,9 +113,46 @@ struct UpdateScoreButton<Content: View>: View {
         Image(systemName: "arrow.forward.circle.fill")
           .foregroundColor(.blue.opacity(0.65))
           .imageScale(.large)
+          .offset(x: -5.0)
       }
     })
-    .offset(x: -5.0)
+    .popover(isPresented: $isUpdating, attachmentAnchor: .point(.trailing), arrowEdge: .top) {
+      VStack {
+        HStack {
+          Text("player 1")
+          TextField("Placeholder", value: $firstScore, formatter: NumberFormatter())
+            .keyboardType(.numberPad)
+            .monospaced()
+        }
+        HStack {
+          Text("player 2")
+          TextField("Placeholder", value: $secondScore, formatter: NumberFormatter())
+            .keyboardType(.numberPad)
+            .monospaced()
+        }
+
+        HStack {
+          Button(action: {
+            self.isUpdating = false
+            self.firstScore = 0
+            self.secondScore = 0
+          }, label: {
+            Text("Cancel")
+          })
+          .buttonStyle(.bordered)
+          Button(action: {
+            self.isUpdating = false
+            self.firstScore = 0
+            self.secondScore = 0
+          }, label: {
+            Text("Update")
+          })
+        }
+        .buttonStyle(.borderedProminent)
+      }
+      .padding()
+      .presentationCompactAdaptation(.popover)
+    }
   }
 }
 
