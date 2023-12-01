@@ -44,7 +44,7 @@ struct StartingView: View {
                     .background(RoundedRectangle(cornerRadius:25))
 //                    .padding(.bottom, 300)
                   }
-                  Divider()
+
                   ForEach(completedBrackets) { bracket in
                     NavigationLink {
                       TournamentBracketView(bracket: bracket)
@@ -54,7 +54,7 @@ struct StartingView: View {
                     .foregroundColor(.gray)
                     .frame(width: 320, height: 50)
                     .background(RoundedRectangle(cornerRadius:25))
-                    .padding(.bottom, 300)
+//                    .padding(.bottom, 300)
                   }
 //                    NavigationLink {
 //                        TournamentBracketView()
