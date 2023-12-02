@@ -241,7 +241,8 @@ class TournamentMatch: Identifiable {
 @Model
 class TournamentPlayer: Identifiable, Equatable {
   let timestamp: Date
-  @Attribute(.unique) let name: String
+//  @Attribute(.unique) let name: String
+  let name: String
 
   static func == (lhs: TournamentPlayer, rhs: TournamentPlayer) -> Bool {
     return lhs.name == rhs.name

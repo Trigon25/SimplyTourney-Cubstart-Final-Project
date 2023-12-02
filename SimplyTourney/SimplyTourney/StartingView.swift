@@ -9,10 +9,10 @@ import SwiftUI
 import SwiftData
 
 struct StartingView: View {
-//  @Query(filter: #Predicate<TournamentBracket> { bracket in !bracket.completed }) var inProgressBrackets: [TournamentBracket]
-//  @Query(filter: #Predicate<TournamentBracket> { bracket in bracket.completed }) var completedBrackets: [TournamentBracket]
-  @Query var inProgressBrackets: [TournamentBracket]
-  @Query var completedBrackets: [TournamentBracket]
+  @Query(filter: #Predicate<TournamentBracket> { bracket in !bracket.completed }) var inProgressBrackets: [TournamentBracket]
+  @Query(filter: #Predicate<TournamentBracket> { bracket in bracket.completed }) var completedBrackets: [TournamentBracket]
+//  @Query var inProgressBrackets: [TournamentBracket]
+//  @Query var completedBrackets: [TournamentBracket]
 
     var body: some View {
         VStack {
@@ -156,24 +156,24 @@ func getRandomTestTournamentBracket(isComplete: Bool? = nil) -> TournamentBracke
     ])
 }
 
-#Preview("Randomly Pre-populated Brackets") {
-  do {
-
-    let container = try ModelContainer(
-      for: TournamentBracket.self,
-      TournamentRound.self,
-      TournamentMatch.self,
-      TournamentPlayer.self,
-      configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-    )
-    
-    for _ in 1...3 {
-      container.mainContext.insert(getRandomTestTournamentBracket())
-    }
-
-    return StartingView()
-      .modelContainer(container)
-  } catch {
-    fatalError("Fail")
-  }
-}
+//#Preview("Randomly Pre-populated Brackets") {
+//  do {
+//
+//    let container = try ModelContainer(
+//      for: TournamentBracket.self,
+//      TournamentRound.self,
+//      TournamentMatch.self,
+//      TournamentPlayer.self,
+//      configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+//    )
+//    
+//    for _ in 1...3 {
+//      container.mainContext.insert(getRandomTestTournamentBracket())
+//    }
+//
+//    return StartingView()
+//      .modelContainer(container)
+//  } catch {
+//    fatalError("Fail")
+//  }
+//}

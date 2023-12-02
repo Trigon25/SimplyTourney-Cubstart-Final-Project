@@ -59,8 +59,8 @@
 		E86B71922B05CCA90002E457 /* SimplyTourney */ = {
 			isa = PBXGroup;
 			children = (
-				192085D62B0C8684009779BC /* Model.swift */,
 				192085D52B0C8684009779BC /* ViewModel.swift */,
+				192085D62B0C8684009779BC /* Model.swift */,
 				E84796D02B05CF59004008E6 /* StartingView.swift */,
 				E86B71932B05CCA90002E457 /* SimplyTourneyApp.swift */,
 				E84796CE2B05CF07004008E6 /* TournamentBracketView.swift */,
