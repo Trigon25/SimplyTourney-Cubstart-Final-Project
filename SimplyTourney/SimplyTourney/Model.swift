@@ -24,11 +24,12 @@ enum TournamentBracketSize: Int, Codable {
 
 @Model
 class TournamentBracket: Identifiable {
-  let timestamp: Date
+  let timestamp: Date = Date.now
   @Attribute(.unique) let name: String
   let size: TournamentBracketSize
   let players: [TournamentPlayer]
   let rounds: [TournamentRound]
+  let completed: Bool = false
 //  var orderedRounds: [TournamentRound] {
 //    rounds.sorted(by: {$0.timestamp < $1.timestamp})
 //  }
@@ -36,11 +37,7 @@ class TournamentBracket: Identifiable {
   var id: String {
       name
   }
-  var completed: Bool {
-    return rounds.allSatisfy({ $0.completed })
-  }
   init(name: String, size: TournamentBracketSize, players: [TournamentPlayer], rounds: [TournamentRound]) {
-    self.timestamp = .now
     self.name = name
     self.size = size
     self.players = players
@@ -48,15 +45,13 @@ class TournamentBracket: Identifiable {
   }
 
   init(name: String, size: TournamentBracketSize, players: [TournamentPlayer]) {
-    self.timestamp = .now
     self.name = name
     self.size = size
     self.players = players
     self.rounds = TournamentBracket.createRounds(size: size, players: players)
   }
   init(name: String, size: Int, players: [String]) {
-    self.timestamp = .now
-    let bracketSize = size == 16 
+    let bracketSize = size == 16
       ? TournamentBracketSize.Sixteen
       : TournamentBracketSize.ThirtyTwo
     let playerList = players.map({ TournamentPlayer(name: $0) })
@@ -65,25 +60,27 @@ class TournamentBracket: Identifiable {
     self.players = playerList
     self.rounds = TournamentBracket.createRounds(size: bracketSize, players: playerList)
   }
+  
+  func syncRounds() {}
 
-  func syncRounds() {
-//    var roundPool = orderedRounds.map({ $0 })
-    var roundPool = rounds.map({ $0 })
-    while !roundPool.isEmpty {
-      let currentRound = roundPool.removeFirst()
-      if let nextRound = roundPool.first {
-        var currentRoundWinnerPool = currentRound.matches.map({ $0.winner })
-        for match in nextRound.matches {
-          let firstPlayer = currentRoundWinnerPool.removeFirst()
-          let secondPlayer = currentRoundWinnerPool.removeFirst()
-          match.firstPlayer = firstPlayer
-          match.secondPlayer = secondPlayer
-        }
-
-      }
-
-    }
-  }
+//  func syncRounds() {
+////    var roundPool = orderedRounds.map({ $0 })
+//    var roundPool = rounds.map({ $0 })
+//    while !roundPool.isEmpty {
+//      let currentRound = roundPool.removeFirst()
+//      if let nextRound = roundPool.first {
+//        var currentRoundWinnerPool = currentRound.matches.map({ $0.winner ?? nil })
+//        for match in nextRound.matches {
+//          let firstPlayer = currentRoundWinnerPool.removeFirst()
+//          let secondPlayer = currentRoundWinnerPool.removeFirst()
+//          match.firstPlayer = firstPlayer
+//          match.secondPlayer = secondPlayer
+//        }
+//
+//      }
+//
+//    }
+//  }
 
   private static func createRounds(size: TournamentBracketSize, players: [TournamentPlayer]) -> [TournamentRound] {
     var rounds: [TournamentRound] = []
@@ -114,8 +111,9 @@ class TournamentBracket: Identifiable {
 
 @Model
 class TournamentRound: Identifiable {
-  let timestamp: Date
+  let timestamp: Date = Date.now
   let matches: [TournamentMatch]
+  let completed: Bool = false
 //  var orderedMatches: [TournamentMatch] {
 //    matches.sorted(by: {$0.timestamp < $1.timestamp})
 //  }
@@ -140,13 +138,9 @@ class TournamentRound: Identifiable {
     name.rawValue
   }
 
-  var completed: Bool {
-    return matches.allSatisfy({ $0.winner != nil })
-  }
 
 
   init(matches: [TournamentMatch]) {
-    self.timestamp = .now
     self.matches = matches
   }
 }
@@ -166,9 +160,10 @@ enum TournamentMatchState: String, Codable {
 
 @Model
 class TournamentMatch: Identifiable {
-  let timestamp: Date
+  let timestamp: Date = Date.now
   var firstPlayer: TournamentPlayer?
   var secondPlayer: TournamentPlayer?
+  var winner: TournamentPlayer?
   var firstPlayerScore: Int?
   var secondPlayerScore: Int?
 
@@ -192,29 +187,7 @@ class TournamentMatch: Identifiable {
     return .Complete
   }
 
-  var winner: TournamentPlayer? {
-    guard let firstPlayer = firstPlayer else {
-      return nil
-    }
-    guard let secondPlayer = secondPlayer else {
-      return nil
-    }
-    guard let firstPlayerScore = firstPlayerScore else {
-      return nil
-    }
-    guard let secondPlayerScore = secondPlayerScore else {
-      return nil
-    }
-    guard firstPlayerScore != secondPlayerScore else {
-      return nil
-    }
-
-    return firstPlayerScore > secondPlayerScore
-    ? firstPlayer : secondPlayer
-  }
-
   init(firstPlayer: TournamentPlayer?, secondPlayer: TournamentPlayer?, firstPlayerScore: Int?, secondPlayerScore: Int?) {
-    self.timestamp = .now
     self.firstPlayer = firstPlayer
     self.secondPlayer = secondPlayer
     self.firstPlayerScore = firstPlayerScore
@@ -222,7 +195,6 @@ class TournamentMatch: Identifiable {
   }
 
   init(firstPlayer: TournamentPlayer?, secondPlayer: TournamentPlayer?) {
-    self.timestamp = .now
     self.firstPlayer = firstPlayer
     self.secondPlayer = secondPlayer
     self.firstPlayerScore = nil
@@ -230,7 +202,6 @@ class TournamentMatch: Identifiable {
   }
 
   init() {
-    self.timestamp = .now
     self.firstPlayer = nil
     self.secondPlayer = nil
     self.firstPlayerScore = nil
@@ -240,8 +211,7 @@ class TournamentMatch: Identifiable {
 
 @Model
 class TournamentPlayer: Identifiable, Equatable {
-  let timestamp: Date
-//  @Attribute(.unique) let name: String
+  let timestamp: Date = Date.now
   let name: String
 
   static func == (lhs: TournamentPlayer, rhs: TournamentPlayer) -> Bool {
@@ -253,7 +223,6 @@ class TournamentPlayer: Identifiable, Equatable {
   }
 
   init(name: String) {
-    self.timestamp = .now
     self.name = name
   }
 }

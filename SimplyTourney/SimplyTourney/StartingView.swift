@@ -9,10 +9,10 @@ import SwiftUI
 import SwiftData
 
 struct StartingView: View {
-  @Query(filter: #Predicate<TournamentBracket> { bracket in !bracket.completed }) var inProgressBrackets: [TournamentBracket]
-  @Query(filter: #Predicate<TournamentBracket> { bracket in bracket.completed }) var completedBrackets: [TournamentBracket]
-//  @Query var inProgressBrackets: [TournamentBracket]
-//  @Query var completedBrackets: [TournamentBracket]
+//  @Query(filter: #Predicate<TournamentBracket> { bracket in !bracket.completed }) var inProgressBrackets: [TournamentBracket]
+//  @Query(filter: #Predicate<TournamentBracket> { bracket in bracket.completed }) var completedBrackets: [TournamentBracket]
+  @Query var inProgressBrackets: [TournamentBracket]
+  @Query var completedBrackets: [TournamentBracket]
 
     var body: some View {
         VStack {
