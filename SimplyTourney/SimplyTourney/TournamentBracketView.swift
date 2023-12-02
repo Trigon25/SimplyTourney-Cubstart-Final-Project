@@ -11,17 +11,20 @@ import SwiftData
 struct TournamentBracketView: View {
   @Environment(\.modelContext) private var modelContext
   @Bindable var bracket: TournamentBracket
+  var orderedRounds: [TournamentRound] {
+    bracket.rounds.sorted(by: {$0.timestamp < $1.timestamp})
+  }
 
   var body: some View {
     TabView {
 //      ForEach(bracket.orderedRounds) { round in
-      ForEach(bracket.rounds) { round in
+      ForEach(orderedRounds) { round in
           GeometryReader {
             geo in
             ScrollView(.vertical, showsIndicators: false) {
               VStack {
 //                if round.name == bracket.orderedRounds.last?.name {
-                if round.name == bracket.rounds.last?.name {
+                if round.name == orderedRounds.last?.name {
                   Image(systemName: "trophy.fill")
                     .foregroundStyle(.linearGradient(colors: [.orange, .yellow], startPoint: .bottomLeading, endPoint: .topTrailing))
                     .imageScale(.large)
@@ -32,7 +35,7 @@ struct TournamentBracketView: View {
                   Image(systemName: round.completed ? "checkmark" : "hourglass.tophalf.filled")
                 }
 //                ForEach(round.orderedMatches) {
-                ForEach(round.matches) {
+                ForEach(round.matches.sorted(by: {$0.timestamp < $1.timestamp})) {
                   match in
                   MatchView(match: match)
                     .padding(30.0)
