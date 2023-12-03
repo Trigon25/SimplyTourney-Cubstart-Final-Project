@@ -29,16 +29,10 @@ struct StartingView: View {
             .imageScale(.large)
           Text("Create").font(.title)
         }
-        //title for created tournaments
-
-        //links to existing tournaments
-
-        //button to make new one
         .foregroundColor(.white)
         .frame(width: 320, height: 50)
         .background(RoundedRectangle(cornerRadius:25).fill(.green))
         .padding([.top, .bottom], 60.0)
-        //                    .padding(.bottom, 100)
         ForEach(inProgressBrackets) { bracket in
           NavigationLink {
             TournamentBracketView(bracket: bracket)
@@ -48,7 +42,6 @@ struct StartingView: View {
           .foregroundColor(.white)
           .frame(width: 320, height: 60)
           .background(RoundedRectangle(cornerRadius:25))
-          //                    .padding(.bottom, 300)
         }
         
 
@@ -61,7 +54,6 @@ struct StartingView: View {
           .foregroundColor(.gray)
           .frame(width: 320, height: 50)
           .background(RoundedRectangle(cornerRadius:25))
-          //                    .padding(.bottom, 300)
         }
         Spacer()
       }

@@ -18,13 +18,11 @@ struct TournamentBracketView: View {
 
   var body: some View {
     TabView {
-//      ForEach(bracket.orderedRounds) { round in
       ForEach(Array(orderedRounds.enumerated()), id: \.element) { roundIndex, round in
           GeometryReader {
             geo in
             ScrollView(.vertical, showsIndicators: false) {
               VStack {
-//                if round.name == bracket.orderedRounds.last?.name {
                 if round.name == orderedRounds.last?.name {
                   Image(systemName: "trophy.fill")
                     .foregroundStyle(.linearGradient(colors: [.orange, .yellow], startPoint: .bottomLeading, endPoint: .topTrailing))
@@ -42,7 +40,6 @@ struct TournamentBracketView: View {
                   }
                   Spacer()
                 }
-//                ForEach(round.orderedMatches) {
                 ForEach(round.matches.sorted(by: {$0.timestamp < $1.timestamp})) {
                   match in
                   MatchView(match: match, bracket: bracket)
@@ -214,14 +211,8 @@ struct UpdateScoreButton<Content: View>: View {
               .foregroundStyle(.white)
               .background(RoundedRectangle(cornerRadius: 20).fill(Color.green.opacity(0.9)))
           })
-//          .buttonStyle(.borderedProminent)
-//          .buttonBorderShape(.capsule)
-//          .accentColor(.green)
-//          .background(RoundedRectangle(cornerRadius: 20).fill(Color.green))
           .disabled(!hasValidScores)
           .opacity(hasValidScores ? 1.0 : 0.6)
-//          .foregroundStyle(.white)
-//          .accentColor(.green)
           Button(action: {
             isUpdating = false
           }, label: {
@@ -230,9 +221,6 @@ struct UpdateScoreButton<Content: View>: View {
               .foregroundStyle(.white)
               .background(RoundedRectangle(cornerRadius: 20).fill(Color.red.opacity(0.9)))
           })
-//          .buttonStyle(.bordered)
-//          .buttonBorderShape(.capsule)
-//          .background(RoundedRectangle(cornerRadius: 20).fill(Color.red))
         }
       }
       .padding()

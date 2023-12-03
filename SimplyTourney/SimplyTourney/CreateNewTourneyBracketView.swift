@@ -25,15 +25,13 @@ struct CreateNewTourneyBracketView: View {
     var body: some View {
         VStack {
             Text("Create New Tournament")
-//            .fontWeight(.semibold)
             .font(.title2)
                 .foregroundStyle(.white)
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.center)
                 .padding()
                 .frame(width: UIScreen.main.bounds.width, height: 100)
-//                .background(UnevenRoundedRectangle(cornerRadii: .init(bottomLeading: 15.0, bottomTrailing: 15.0)).fill(Color.blue.opacity(0.85)))
-            
+
             VStack {
                 HStack {
                     Text("Tournament:").frame(width: UIScreen.main.bounds.width/3.5)
@@ -93,7 +91,6 @@ struct CreateNewTourneyBracketView: View {
             }
             )
             .scrollContentBackground(.hidden)
-//            .background(offWhite.blendMode(.plusDarker))
             .background(Color.clear)
 
             HStack {
