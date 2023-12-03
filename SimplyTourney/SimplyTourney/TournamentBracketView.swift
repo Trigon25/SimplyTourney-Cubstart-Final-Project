@@ -111,20 +111,16 @@ struct UpdateScoreButton<Content: View>: View {
   @Bindable var bracket: TournamentBracket
   @ViewBuilder let content: Content
   @State private var isUpdating: Bool = false
-  @State var firstScore: Int? = 0
-  @State var secondScore: Int? = 0
+  @State var firstScore: Int = 0
+  @State var secondScore: Int = 0
   let offWhite: Color = Color(red: 0.93, green: 0.96, blue: 1)
+  let validScoreRange = 0...999
 
   var hasValidScores: Bool {
-    if let firstScore, let secondScore {
       guard firstScore != secondScore else {
         return false
       }
-      let validScores = 0...999
-      return validScores.contains(firstScore) && validScores.contains(secondScore)
-    } else {
-      return false
-    }
+      return validScoreRange.contains(firstScore) && validScoreRange.contains(secondScore)
   }
 
   var body: some View {
@@ -146,16 +142,55 @@ struct UpdateScoreButton<Content: View>: View {
     .popover(isPresented: $isUpdating, attachmentAnchor: .point(.trailing), arrowEdge: .top) {
       VStack {
         HStack {
+          Image(systemName: "person.fill")
           Text(match.firstPlayer?.name ?? "Player 1")
+          Spacer()
           TextField("Score", value: $firstScore, formatter: NumberFormatter())
             .keyboardType(.numberPad)
             .monospaced()
+            .frame(width: 50)
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .fixedSize(horizontal: true, vertical: false)
+            .textInputAutocapitalization(.never)
+            .disableAutocorrection(true)
+            .onChange(of: firstScore) {
+              guard validScoreRange.contains(firstScore) else {
+                if firstScore > validScoreRange.upperBound {
+                  firstScore = validScoreRange.upperBound
+                } else if firstScore < validScoreRange.lowerBound {
+                  firstScore = validScoreRange.lowerBound
+                } else {
+                  firstScore = 0
+                }
+                return
+              }
+            }
         }
+
         HStack {
+          Image(systemName: "person.fill")
           Text(match.secondPlayer?.name ?? "Player 2")
+          Spacer()
           TextField("Score", value: $secondScore, formatter: NumberFormatter())
             .keyboardType(.numberPad)
             .monospaced()
+            .frame(width: 50)
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .fixedSize(horizontal: true, vertical: false)
+            .textInputAutocapitalization(.never)
+            .disableAutocorrection(true)
+            .onChange(of: secondScore) {
+              guard validScoreRange.contains(secondScore) else {
+                if secondScore > validScoreRange.upperBound {
+                  secondScore = validScoreRange.upperBound
+                } else if secondScore < validScoreRange.lowerBound {
+                  secondScore = validScoreRange.lowerBound
+                } else {
+                  secondScore = 0
+                }
+                return
+              }
+            }
         }
 
         HStack {
@@ -166,7 +201,7 @@ struct UpdateScoreButton<Content: View>: View {
             bracket.sync()
           }, label: {
             Text("Update")
-              .padding(7.0)
+              .padding(12.0)
               .foregroundStyle(.white)
               .background(RoundedRectangle(cornerRadius: 20).fill(Color.green.opacity(0.9)))
           })
@@ -175,13 +210,14 @@ struct UpdateScoreButton<Content: View>: View {
 //          .accentColor(.green)
 //          .background(RoundedRectangle(cornerRadius: 20).fill(Color.green))
           .disabled(!hasValidScores)
+          .opacity(hasValidScores ? 1.0 : 0.6)
 //          .foregroundStyle(.white)
 //          .accentColor(.green)
           Button(action: {
             isUpdating = false
           }, label: {
             Text("Cancel")
-              .padding(7.0)
+              .padding(12.0)
               .foregroundStyle(.white)
               .background(RoundedRectangle(cornerRadius: 20).fill(Color.red.opacity(0.9)))
           })

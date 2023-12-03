@@ -37,7 +37,7 @@ struct StartingView: View {
         .foregroundColor(.white)
         .frame(width: 320, height: 50)
         .background(RoundedRectangle(cornerRadius:25).fill(.green))
-        .padding([.top, .bottom], 50.0)
+        .padding([.top, .bottom], 60.0)
         //                    .padding(.bottom, 100)
         ForEach(inProgressBrackets) { bracket in
           NavigationLink {
@@ -46,7 +46,7 @@ struct StartingView: View {
             Text(bracket.name).font(.title)
           }
           .foregroundColor(.white)
-          .frame(width: 320, height: 50)
+          .frame(width: 320, height: 60)
           .background(RoundedRectangle(cornerRadius:25))
           //                    .padding(.bottom, 300)
         }
@@ -68,6 +68,7 @@ struct StartingView: View {
       .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
       .background(LinearGradient(gradient: Gradient(colors: [.blue, Color(red:0.4627, green:0.8392, blue:1.0)]), startPoint: .top, endPoint: .bottom))
     }
+    .accentColor(.black)
     .fullScreenCover(isPresented: $isCreateSheetOpen, content: {
           CreateNewTourneyBracketView()
         })
