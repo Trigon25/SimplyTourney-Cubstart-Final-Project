@@ -9,71 +9,65 @@ import SwiftUI
 import SwiftData
 
 struct StartingView: View {
-//  @Query(filter: #Predicate<TournamentBracket> { bracket in !bracket.completed }) var inProgressBrackets: [TournamentBracket]
-//  @Query(filter: #Predicate<TournamentBracket> { bracket in bracket.completed }) var completedBrackets: [TournamentBracket]
-  @Query var inProgressBrackets: [TournamentBracket]
-  @Query var completedBrackets: [TournamentBracket]
+  @Query var brackets: [TournamentBracket]
+  @State var isCreateSheetOpen = false
+  var inProgressBrackets: [TournamentBracket] {
+    brackets.filter({ !$0.completed })
+  }
+  var completedBrackets: [TournamentBracket] {
+    brackets.filter({ $0.completed })
+  }
 
-    var body: some View {
-        VStack {
-            NavigationStack {
-                VStack {
-                    Text("Simply**Tourney**").font(.largeTitle).padding(.top, 50)
-                    NavigationLink {
-                        CreateNewTourneyBracketView()
-                    } label: {
-                        Text("**Create New Tourney**").font(.title)
-                    }
-                    //title for created tournaments
-                    
-                    //links to existing tournaments
-
-                    //button to make new one
-                    .foregroundColor(.white)
-                    .frame(width: 320, height: 50)
-                    .background(RoundedRectangle(cornerRadius:25))
-//                    .padding(.bottom, 100)
-                  ForEach(inProgressBrackets) { bracket in
-                    NavigationLink {
-                      TournamentBracketView(bracket: bracket)
-                    } label: {
-                      Text("**\(bracket.name)**").font(.title)
-                    }
-                    .foregroundColor(.white)
-                    .frame(width: 320, height: 50)
-                    .background(RoundedRectangle(cornerRadius:25))
-//                    .padding(.bottom, 300)
-                  }
-
-                  ForEach(completedBrackets) { bracket in
-                    NavigationLink {
-                      TournamentBracketView(bracket: bracket)
-                    } label: {
-                      Text("__\(bracket.name)__").font(.title)
-                    }
-                    .foregroundColor(.gray)
-                    .frame(width: 320, height: 50)
-                    .background(RoundedRectangle(cornerRadius:25))
-//                    .padding(.bottom, 300)
-                  }
-//                    NavigationLink {
-//                        TournamentBracketView()
-//                    } label: {
-//                        Text("**Frogger Tourney**").font(.title)
-//                    }
-
-                }.navigationDestination(for: String.self) { value in
-                }
-                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-                .background(LinearGradient(gradient: Gradient(colors: [.blue, Color(red:0.4627, green:0.8392, blue:1.0)]), startPoint: .top, endPoint: .bottom))
-            }
-            
-            
+  var body: some View {
+    NavigationStack {
+      VStack {
+        Text("Simply**Tourney**").font(.largeTitle).padding(.top, 50)
+        Button {
+          isCreateSheetOpen = true
+        } label: {
+          Text("**Create New Tourney**").font(.title)
         }
-        
-                
+        //title for created tournaments
+
+        //links to existing tournaments
+
+        //button to make new one
+        .foregroundColor(.white)
+        .frame(width: 320, height: 50)
+        .background(RoundedRectangle(cornerRadius:25))
+        //                    .padding(.bottom, 100)
+        ForEach(inProgressBrackets) { bracket in
+          NavigationLink {
+            TournamentBracketView(bracket: bracket)
+          } label: {
+            Text("**\(bracket.name)**").font(.title)
+          }
+          .foregroundColor(.white)
+          .frame(width: 320, height: 50)
+          .background(RoundedRectangle(cornerRadius:25))
+          //                    .padding(.bottom, 300)
+        }
+
+        ForEach(completedBrackets) { bracket in
+          NavigationLink {
+            TournamentBracketView(bracket: bracket)
+          } label: {
+            Text("__\(bracket.name)__").font(.title)
+          }
+          .foregroundColor(.gray)
+          .frame(width: 320, height: 50)
+          .background(RoundedRectangle(cornerRadius:25))
+          //                    .padding(.bottom, 300)
+        }
+      }
+      .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+      .background(LinearGradient(gradient: Gradient(colors: [.blue, Color(red:0.4627, green:0.8392, blue:1.0)]), startPoint: .top, endPoint: .bottom))
     }
-        
+    .fullScreenCover(isPresented: $isCreateSheetOpen, content: {
+          CreateNewTourneyBracketView()
+        })
+  }
+
 }
 
 
@@ -166,7 +160,7 @@ struct StartingView: View {
 //      TournamentPlayer.self,
 //      configurations: ModelConfiguration(isStoredInMemoryOnly: true)
 //    )
-//    
+//
 //    for _ in 1...3 {
 //      container.mainContext.insert(getRandomTestTournamentBracket())
 //    }

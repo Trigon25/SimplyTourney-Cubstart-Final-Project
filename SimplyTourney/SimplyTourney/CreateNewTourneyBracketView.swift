@@ -20,15 +20,20 @@ struct CreateNewTourneyBracketView: View {
     
     @State private var showingAlert = false
     @State private var bracketSizeAlert = false
+
+//    let offWhite: Color = Color(red: 238, green: 245, blue: 255)
+  let offWhite: Color = Color(red: 0.93, green: 0.96, blue: 1)
     var body: some View {
         VStack {
             Text("Create New Tournament")
+//            .fontWeight(.semibold)
+            .font(.title2)
                 .foregroundStyle(.white)
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.center)
                 .padding()
                 .frame(width: UIScreen.main.bounds.width, height: 100)
-                .background(UnevenRoundedRectangle(cornerRadii: .init(bottomLeading: 15.0, bottomTrailing: 15.0)).fill(Color.blue.opacity(0.65)))
+//                .background(UnevenRoundedRectangle(cornerRadii: .init(bottomLeading: 15.0, bottomTrailing: 15.0)).fill(Color.blue.opacity(0.85)))
             
             VStack {
                 HStack {
@@ -67,7 +72,9 @@ struct CreateNewTourneyBracketView: View {
                     
                 }.padding(EdgeInsets(top: 25, leading: 0, bottom: 25, trailing: 0))
             }.padding()
-            
+            .background(offWhite)
+
+
             Text("Player List:  \(playerList.count)")
                 .foregroundStyle(.white)
                 .padding()
@@ -77,19 +84,22 @@ struct CreateNewTourneyBracketView: View {
             List{
                 ForEach(playerList, id: \.self) { player in
                     Text(player).font(.system(size: 16.0))
+                    .listRowBackground(offWhite)
                 }.onDelete(perform: delete)
             }
-            .modifier(EmptyDataModifier(
-                items: playerList,
-                placeholder: Text("No players")
-                    .foregroundStyle(.gray.opacity(0.5))
-                    .padding()
-            ))
-            
+            .overlay(Group {
+              if playerList.isEmpty {
+                Text("No players")
+              }
+            }
+            )
+            .scrollContentBackground(.hidden)
+//            .background(offWhite.blendMode(.plusDarker))
+            .background(Color.clear)
+
             HStack {
                 Button{
                     if playerList.count == bracketSize {
-                        // TODO: append the new bracket to swiftdata; current problem is that swiftdata models are not set up, might need to change the way we set up the model file for us to be able to query it.
                       let newBracket = TournamentBracket(
                         name: newTournament,
                         size: bracketSize,
@@ -129,9 +139,10 @@ struct CreateNewTourneyBracketView: View {
                         .background(RoundedRectangle(cornerRadius: 20).fill(Color.red.opacity(0.9)))
                 }
             }
-            
-            Spacer()
+            .padding(.top, 10.0)
+
         }
+        .background(LinearGradient(gradient: Gradient(colors: [.blue, Color(red:0.4627, green:0.8392, blue:1.0)]), startPoint: .top, endPoint: .bottom))
 
     }
     
@@ -141,20 +152,6 @@ struct CreateNewTourneyBracketView: View {
     }
 }
 
-
-struct EmptyDataModifier<Placeholder: View>: ViewModifier {
-    let items: [Any]
-    let placeholder: Placeholder
-
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        if !items.isEmpty {
-            content
-        } else {
-            placeholder
-        }
-    }
-}
 
 
 #Preview {
