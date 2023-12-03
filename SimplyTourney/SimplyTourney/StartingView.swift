@@ -25,7 +25,9 @@ struct StartingView: View {
         Button {
           isCreateSheetOpen = true
         } label: {
-          Text("**Create New Tourney**").font(.title)
+          Image(systemName: "square.and.pencil")
+            .imageScale(.large)
+          Text("Create").font(.title)
         }
         //title for created tournaments
 
@@ -34,31 +36,34 @@ struct StartingView: View {
         //button to make new one
         .foregroundColor(.white)
         .frame(width: 320, height: 50)
-        .background(RoundedRectangle(cornerRadius:25))
+        .background(RoundedRectangle(cornerRadius:25).fill(.green))
+        .padding([.top, .bottom], 50.0)
         //                    .padding(.bottom, 100)
         ForEach(inProgressBrackets) { bracket in
           NavigationLink {
             TournamentBracketView(bracket: bracket)
           } label: {
-            Text("**\(bracket.name)**").font(.title)
+            Text(bracket.name).font(.title)
           }
           .foregroundColor(.white)
           .frame(width: 320, height: 50)
           .background(RoundedRectangle(cornerRadius:25))
           //                    .padding(.bottom, 300)
         }
+        
 
         ForEach(completedBrackets) { bracket in
           NavigationLink {
             TournamentBracketView(bracket: bracket)
           } label: {
-            Text("__\(bracket.name)__").font(.title)
+            Text(bracket.name).font(.title)
           }
           .foregroundColor(.gray)
           .frame(width: 320, height: 50)
           .background(RoundedRectangle(cornerRadius:25))
           //                    .padding(.bottom, 300)
         }
+        Spacer()
       }
       .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
       .background(LinearGradient(gradient: Gradient(colors: [.blue, Color(red:0.4627, green:0.8392, blue:1.0)]), startPoint: .top, endPoint: .bottom))
