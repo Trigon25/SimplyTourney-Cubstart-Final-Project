@@ -11,13 +11,14 @@ import SwiftData
 struct TournamentBracketView: View {
   @Environment(\.modelContext) private var modelContext
   @Bindable var bracket: TournamentBracket
+  @State var selectedTab: Int = 0
 
   var orderedRounds: [TournamentRound] {
     bracket.rounds.sorted(by: {$0.timestamp < $1.timestamp})
   }
 
   var body: some View {
-    TabView {
+    TabView(selection: $selectedTab) {
       ForEach(Array(orderedRounds.enumerated()), id: \.element) { roundIndex, round in
           GeometryReader {
             geo in
@@ -49,10 +50,13 @@ struct TournamentBracketView: View {
               .frame(minHeight: geo.size.height)
             }
           }
+          .tag(roundIndex)
       }
     }
+    .onAppear {
+      selectedTab = orderedRounds.firstIndex(where: {!$0.completed}) ?? orderedRounds.endIndex - 1
+    }
     .navigationBarTitleDisplayMode(.inline)
-
     .background(LinearGradient(gradient: Gradient(colors: [.blue, Color(red:0.4627, green:0.8392, blue:1.0)]), startPoint: .top, endPoint: .bottom))
     .safeAreaPadding(.horizontal, 5)
     .tabViewStyle(.page(indexDisplayMode: .always))
