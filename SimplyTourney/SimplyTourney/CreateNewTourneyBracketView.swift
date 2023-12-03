@@ -21,7 +21,6 @@ struct CreateNewTourneyBracketView: View {
     @State private var showingAlert = false
     @State private var bracketSizeAlert = false
 
-//    let offWhite: Color = Color(red: 238, green: 245, blue: 255)
   let offWhite: Color = Color(red: 0.93, green: 0.96, blue: 1)
     var body: some View {
         VStack {
@@ -132,7 +131,7 @@ struct CreateNewTourneyBracketView: View {
                     newPlayerName = ""
                     dismiss()
                 } label: {
-                    Text("Discard")
+                    Text("Cancel")
                         .foregroundStyle(.white)
                         .padding()
                         .frame(width: 100, height: 50)

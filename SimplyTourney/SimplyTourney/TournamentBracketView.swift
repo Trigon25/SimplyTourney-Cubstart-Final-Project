@@ -11,6 +11,7 @@ import SwiftData
 struct TournamentBracketView: View {
   @Environment(\.modelContext) private var modelContext
   @Bindable var bracket: TournamentBracket
+
   var orderedRounds: [TournamentRound] {
     bracket.rounds.sorted(by: {$0.timestamp < $1.timestamp})
   }
@@ -46,6 +47,7 @@ struct TournamentBracketView: View {
           }
       }
     }
+    .background(LinearGradient(gradient: Gradient(colors: [.blue, Color(red:0.4627, green:0.8392, blue:1.0)]), startPoint: .top, endPoint: .bottom))
     .safeAreaPadding(.horizontal, 5)
     .tabViewStyle(.page(indexDisplayMode: .always))
     .navigationTitle(bracket.name)
@@ -63,10 +65,12 @@ struct MatchPlayerView: View {
   let player: TournamentPlayer?
   var score: Int?
   var isWinner: Bool? = false
+  let offWhite: Color = Color(red: 0.93, green: 0.96, blue: 1)
+
   var body: some View {
     ZStack {
       Capsule()
-        .fill(.gray.opacity(0.5))
+        .fill(offWhite.opacity(0.7))
         .strokeBorder(lineWidth: isWinner == true ? 2.0 : 0)
       HStack {
         if let player = player {
@@ -109,6 +113,7 @@ struct UpdateScoreButton<Content: View>: View {
   @State private var isUpdating: Bool = false
   @State var firstScore: Int? = 0
   @State var secondScore: Int? = 0
+  let offWhite: Color = Color(red: 0.93, green: 0.96, blue: 1)
 
   var hasValidScores: Bool {
     if let firstScore, let secondScore {
@@ -133,7 +138,7 @@ struct UpdateScoreButton<Content: View>: View {
           content
         }
         Image(systemName: "arrow.forward.circle.fill")
-          .foregroundColor(.blue.opacity(0.65))
+          .foregroundColor(.black.opacity(0.65))
           .imageScale(.large)
           .offset(x: -5.0)
       }
@@ -141,25 +146,19 @@ struct UpdateScoreButton<Content: View>: View {
     .popover(isPresented: $isUpdating, attachmentAnchor: .point(.trailing), arrowEdge: .top) {
       VStack {
         HStack {
-          Text("player 1")
-          TextField("Placeholder", value: $firstScore, formatter: NumberFormatter())
+          Text(match.firstPlayer?.name ?? "Player 1")
+          TextField("Score", value: $firstScore, formatter: NumberFormatter())
             .keyboardType(.numberPad)
             .monospaced()
         }
         HStack {
-          Text("player 2")
-          TextField("Placeholder", value: $secondScore, formatter: NumberFormatter())
+          Text(match.secondPlayer?.name ?? "Player 2")
+          TextField("Score", value: $secondScore, formatter: NumberFormatter())
             .keyboardType(.numberPad)
             .monospaced()
         }
 
         HStack {
-          Button(action: {
-            isUpdating = false
-          }, label: {
-            Text("Cancel")
-          })
-          .buttonStyle(.bordered)
           Button(action: {
             match.firstPlayerScore = firstScore
             match.secondPlayerScore = secondScore
@@ -167,11 +166,32 @@ struct UpdateScoreButton<Content: View>: View {
             bracket.sync()
           }, label: {
             Text("Update")
-          }).disabled(!hasValidScores)
+              .padding(7.0)
+              .foregroundStyle(.white)
+              .background(RoundedRectangle(cornerRadius: 20).fill(Color.green.opacity(0.9)))
+          })
+//          .buttonStyle(.borderedProminent)
+//          .buttonBorderShape(.capsule)
+//          .accentColor(.green)
+//          .background(RoundedRectangle(cornerRadius: 20).fill(Color.green))
+          .disabled(!hasValidScores)
+//          .foregroundStyle(.white)
+//          .accentColor(.green)
+          Button(action: {
+            isUpdating = false
+          }, label: {
+            Text("Cancel")
+              .padding(7.0)
+              .foregroundStyle(.white)
+              .background(RoundedRectangle(cornerRadius: 20).fill(Color.red.opacity(0.9)))
+          })
+//          .buttonStyle(.bordered)
+//          .buttonBorderShape(.capsule)
+//          .background(RoundedRectangle(cornerRadius: 20).fill(Color.red))
         }
-        .buttonStyle(.borderedProminent)
       }
       .padding()
+      .background(offWhite)
       .presentationCompactAdaptation(.popover)
     }
   }
