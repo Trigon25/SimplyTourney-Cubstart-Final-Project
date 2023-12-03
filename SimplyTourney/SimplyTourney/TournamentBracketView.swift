@@ -19,7 +19,7 @@ struct TournamentBracketView: View {
   var body: some View {
     TabView {
 //      ForEach(bracket.orderedRounds) { round in
-      ForEach(orderedRounds) { round in
+      ForEach(Array(orderedRounds.enumerated()), id: \.element) { roundIndex, round in
           GeometryReader {
             geo in
             ScrollView(.vertical, showsIndicators: false) {
@@ -31,9 +31,16 @@ struct TournamentBracketView: View {
                     .imageScale(.large)
                 }
                 HStack {
+                  Spacer()
+                  if roundIndex > orderedRounds.startIndex {
+                    Image(systemName: "arrow.left")
+                  }
                   Text(round.name.rawValue)
                     .font(.title2)
-                  Image(systemName: round.completed ? "checkmark" : "hourglass.tophalf.filled")
+                  if roundIndex < orderedRounds.endIndex-1 {
+                    Image(systemName: "arrow.right")
+                  }
+                  Spacer()
                 }
 //                ForEach(round.orderedMatches) {
                 ForEach(round.matches.sorted(by: {$0.timestamp < $1.timestamp})) {
@@ -47,6 +54,8 @@ struct TournamentBracketView: View {
           }
       }
     }
+    .navigationBarTitleDisplayMode(.inline)
+
     .background(LinearGradient(gradient: Gradient(colors: [.blue, Color(red:0.4627, green:0.8392, blue:1.0)]), startPoint: .top, endPoint: .bottom))
     .safeAreaPadding(.horizontal, 5)
     .tabViewStyle(.page(indexDisplayMode: .always))
