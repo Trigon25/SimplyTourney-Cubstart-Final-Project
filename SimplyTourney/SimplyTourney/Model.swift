@@ -29,14 +29,12 @@ class TournamentBracket: Identifiable {
   let size: TournamentBracketSize
   let players: [TournamentPlayer]
   let rounds: [TournamentRound]
-  let completed: Bool = false
-//  var orderedRounds: [TournamentRound] {
-//    rounds.sorted(by: {$0.timestamp < $1.timestamp})
-//  }
+  var completed: Bool = false
 
   var id: String {
       name
   }
+
   init(name: String, size: TournamentBracketSize, players: [TournamentPlayer], rounds: [TournamentRound]) {
     self.name = name
     self.size = size
@@ -61,26 +59,25 @@ class TournamentBracket: Identifiable {
     self.rounds = TournamentBracket.createRounds(size: bracketSize, players: playerList)
   }
   
-  func syncRounds() {}
+  func sync() {
+    rounds.forEach({ $0.sync() })
+    completed = rounds.allSatisfy({ $0.completed })
 
-//  func syncRounds() {
-////    var roundPool = orderedRounds.map({ $0 })
-//    var roundPool = rounds.map({ $0 })
-//    while !roundPool.isEmpty {
-//      let currentRound = roundPool.removeFirst()
-//      if let nextRound = roundPool.first {
-//        var currentRoundWinnerPool = currentRound.matches.map({ $0.winner ?? nil })
-//        for match in nextRound.matches {
-//          let firstPlayer = currentRoundWinnerPool.removeFirst()
-//          let secondPlayer = currentRoundWinnerPool.removeFirst()
-//          match.firstPlayer = firstPlayer
-//          match.secondPlayer = secondPlayer
-//        }
-//
-//      }
-//
-//    }
-//  }
+    var roundPool = rounds.sorted(by: { $0.timestamp < $1.timestamp })
+    while !roundPool.isEmpty {
+      let currentRound = roundPool.removeFirst()
+      if let nextRound = roundPool.first {
+        var currentRoundWinnerPool = currentRound.matches.sorted(by: { $0.timestamp < $1.timestamp }).map({ $0.winner ?? nil })
+        for match in nextRound.matches.sorted(by: { $0.timestamp < $1.timestamp }){
+          let firstPlayer = currentRoundWinnerPool.removeFirst()
+          let secondPlayer = currentRoundWinnerPool.removeFirst()
+          match.firstPlayer = firstPlayer
+          match.secondPlayer = secondPlayer
+        }
+
+      }
+    }
+  }
 
   private static func createRounds(size: TournamentBracketSize, players: [TournamentPlayer]) -> [TournamentRound] {
     var rounds: [TournamentRound] = []
@@ -113,10 +110,8 @@ class TournamentBracket: Identifiable {
 class TournamentRound: Identifiable {
   let timestamp: Date = Date.now
   let matches: [TournamentMatch]
-  let completed: Bool = false
-//  var orderedMatches: [TournamentMatch] {
-//    matches.sorted(by: {$0.timestamp < $1.timestamp})
-//  }
+  var completed: Bool = false
+
   var name: TournamentRoundName {
     switch(matches.count) {
     case 16:
@@ -138,7 +133,11 @@ class TournamentRound: Identifiable {
     name.rawValue
   }
 
+  func sync() {
+    matches.forEach({ $0.sync() })
 
+    completed = matches.allSatisfy({ $0.winner != nil })
+  }
 
   init(matches: [TournamentMatch]) {
     self.matches = matches
@@ -185,6 +184,22 @@ class TournamentMatch: Identifiable {
     }
 
     return .Complete
+  }
+
+  func sync() {
+    if let firstPlayer, let secondPlayer, let firstPlayerScore, let secondPlayerScore {
+      
+      guard firstPlayerScore != secondPlayerScore else {
+        winner = nil
+        return
+      }
+
+      winner = firstPlayerScore > secondPlayerScore 
+        ? firstPlayer
+        : secondPlayer
+    } else {
+      winner = nil
+    }
   }
 
   init(firstPlayer: TournamentPlayer?, secondPlayer: TournamentPlayer?, firstPlayerScore: Int?, secondPlayerScore: Int?) {

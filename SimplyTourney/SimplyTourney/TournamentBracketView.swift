@@ -37,7 +37,7 @@ struct TournamentBracketView: View {
 //                ForEach(round.orderedMatches) {
                 ForEach(round.matches.sorted(by: {$0.timestamp < $1.timestamp})) {
                   match in
-                  MatchView(match: match)
+                  MatchView(match: match, bracket: bracket)
                     .padding(30.0)
                 }
               }
@@ -104,10 +104,23 @@ struct MatchPlayerView: View {
 
 struct UpdateScoreButton<Content: View>: View {
   @Bindable var match: TournamentMatch
+  @Bindable var bracket: TournamentBracket
   @ViewBuilder let content: Content
   @State private var isUpdating: Bool = false
-  @State var firstScore: Int = 0
-  @State var secondScore: Int = 0
+  @State var firstScore: Int? = 0
+  @State var secondScore: Int? = 0
+
+  var hasValidScores: Bool {
+    if let firstScore, let secondScore {
+      guard firstScore != secondScore else {
+        return false
+      }
+      let validScores = 0...999
+      return validScores.contains(firstScore) && validScores.contains(secondScore)
+    } else {
+      return false
+    }
+  }
 
   var body: some View {
     Button (action: {
@@ -151,9 +164,10 @@ struct UpdateScoreButton<Content: View>: View {
             match.firstPlayerScore = firstScore
             match.secondPlayerScore = secondScore
             isUpdating = false
+            bracket.sync()
           }, label: {
             Text("Update")
-          })
+          }).disabled(!hasValidScores)
         }
         .buttonStyle(.borderedProminent)
       }
@@ -165,6 +179,7 @@ struct UpdateScoreButton<Content: View>: View {
 
 struct MatchView: View {
   let match: TournamentMatch
+  let bracket: TournamentBracket
   var isFirstPlayerWinner: Bool {
     match.winner == match.firstPlayer
   }
@@ -179,7 +194,7 @@ struct MatchView: View {
         MatchPlayerView(player: match.firstPlayer)
         MatchPlayerView(player: match.secondPlayer)
       case .Ready:
-        UpdateScoreButton(match: match) {
+        UpdateScoreButton(match: match, bracket: bracket) {
             MatchPlayerView(player: match.firstPlayer)
             MatchPlayerView(player: match.secondPlayer)
           }
