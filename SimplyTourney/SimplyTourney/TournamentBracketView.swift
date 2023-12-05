@@ -208,7 +208,9 @@ struct UpdateScoreButton<Content: View>: View {
             match.firstPlayerScore = firstScore
             match.secondPlayerScore = secondScore
             isUpdating = false
-            bracket.sync()
+            DispatchQueue.main.async {
+              bracket.sync()
+            }
           }, label: {
             Text("Update")
               .padding(12.0)
@@ -238,16 +240,22 @@ struct MatchView: View {
   let match: TournamentMatch
   let bracket: TournamentBracket
   var isFirstPlayerWinner: Bool {
-    match.winner == match.firstPlayer
+    if let winner = match.winner, let firstPlayer = match.firstPlayer {
+      return winner == firstPlayer
+    }
+    return false
   }
   var isSecondPlayerWinner: Bool {
-    match.winner == match.secondPlayer
+    if let winner = match.winner, let secondPlayer = match.secondPlayer {
+      return winner == secondPlayer
+    }
+    return false
   }
 
   var body: some View {
     VStack(spacing: 3.0) {
       switch match.state {
-      case .Empty, .NotReady:
+      case .Empty:
         MatchPlayerView(player: match.firstPlayer)
         MatchPlayerView(player: match.secondPlayer)
       case .Ready:

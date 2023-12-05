@@ -149,12 +149,9 @@ enum TournamentMatchState: String, Codable {
   case Complete = "complete"
   case Ready = "ready"
   case Empty = "empty"
-  case NotReady = "not_ready"
   // Complete: there is a first player, second player, both scores, and a winner
   // Ready: there is a first player, second player, no scores, and no winner
-  // Empty: there is no first player, no second player, no scores, and no winner
-  // NotReady: there is a first player, no second player, no scores, and no winner
-  // NotReady: there is a second player, no first player, no scores, and no winner
+  // Empty: there is no first player or no second player, no scores, and no winner
 }
 
 @Model
@@ -171,19 +168,16 @@ class TournamentMatch: Identifiable {
   }
 
   var state: TournamentMatchState {
-    if firstPlayer == nil && secondPlayer == nil {
+    if let _ = firstPlayer, let _ = secondPlayer {
+      if let _ = firstPlayerScore, let _ = secondPlayerScore {
+        return .Complete
+      } else {
+        return .Ready
+      }
+    } else {
       return .Empty
     }
 
-    if firstPlayer == nil || secondPlayer == nil {
-      return .NotReady
-    }
-
-    if (firstPlayerScore == nil || secondPlayerScore == nil) {
-      return .Ready
-    }
-
-    return .Complete
   }
 
   func sync() {
